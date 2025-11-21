@@ -39,7 +39,9 @@ const restablecer = ()=> {
         <div class="flex items-center justify-center">
             <button
                 @click="incrementar"
-                class=" text-while bg-red-500 px-6 py-3 text-4xl font-bold hover:bg-red-600"
+                class=" text-while bg-red-500 px-6 py-3 text-4xl font-bold hover:bg-red-600
+                rounded-2xl
+                "
                 
             >
                 +
@@ -47,7 +49,7 @@ const restablecer = ()=> {
         </div>
         <div class="flex items-center justify-center">
             <a
-                class="text-while bg-red-500 px-6 py-3 text-4xl font-bold hover:bg-red-600"
+                class="text-while bg-white px-6 py-3 text-4xl font-bold"
             >
                 {{ contador }}
             </a>
@@ -55,7 +57,9 @@ const restablecer = ()=> {
         <div class="flex items-center justify-center">
             <button
                 @click="decrementar"
-                class="text-while bg-red-500 px-6 py-3 text-4xl font-bold hover:bg-red-600"
+                class="text-while bg-red-500 px-6 py-3 text-4xl font-bold hover:bg-red-600
+                rounded-2xl
+                "
             >
                 -
             </button>
@@ -65,7 +69,9 @@ const restablecer = ()=> {
         <div class="flex items-center justify-center">
             <button
                 @click="restablecer"
-                class=" text-while bg-green-500 px-6 py-3 text-4xl font-bold hover:bg-red-600"
+                class=" text-while bg-green-500 px-6 py-3 text-4xl font-bold hover:bg-blue-200
+                rounded-2xl
+                "
                 
             >
                 restablecer
