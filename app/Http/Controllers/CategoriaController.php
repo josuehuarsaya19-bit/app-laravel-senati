@@ -17,7 +17,7 @@ class CategoriaController extends Controller
         return response()->json(
         [
             'success' => true,
-            'nombre' => 'josue Huarsaya,
+            'nombre' => 'josue Huarsaya',
             'data'=> $categorias
         ]
         );
