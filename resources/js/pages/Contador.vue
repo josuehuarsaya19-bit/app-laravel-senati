@@ -49,7 +49,7 @@ const restablecer = ()=> {
         </div>
         <div class="flex items-center justify-center">
             <a
-                class="text-while bg-white px-6 py-3 text-4xl font-bold"
+                class="text-while bg-blue px-6 py-3 text-4xl font-bold"
             >
                 {{ contador }}
             </a>
