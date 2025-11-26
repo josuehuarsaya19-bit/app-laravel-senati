@@ -11,8 +11,8 @@ class CategoriaController extends Controller
     //Listar
     public function listarCategoria(){
         //$categorias = Categoria::all();
-        //$categorias = Categoria::orderBy('created_at','asc')->get();
-        $categorias = Categoria ::first();
+        $categorias = Categoria::orderBy('created_at','asc')->get();
+        //$categorias = Categoria ::first();
 
         return response()->json(
         [

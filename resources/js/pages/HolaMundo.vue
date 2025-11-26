@@ -17,7 +17,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     <Head title="Dashboard" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex items-center justify-center">
-        <p class="text-amber-600 text-1x9"> Hola Mundo</p>
+        <p class="text-amber-600 text-7xl"> Hola Mundo</p>
     </div>
     </AppLayout>
 </template>
