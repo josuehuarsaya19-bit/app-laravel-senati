@@ -4,13 +4,16 @@ import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
-import { Pencil, Plus, Save, Trash, X } from 'lucide-vue-next';
+import { Pencil, Plus, Save, SquareX, Trash2 } from 'lucide-vue-next';
+import Swal from 'sweetalert2';
 import { onMounted, ref } from 'vue';
 
 const categorias = ref([]);
 const miNombre = ref('');
+const mostrarModal = ref(false);
+const mostrarModalEditar = ref(false);
 
-// formulario
+//Formulario
 const formulario = ref({
     nombre_categoria: '',
     descripcion: '',
@@ -23,137 +26,138 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const mostrarModals = ref(false);
-
 const listarCategoria = async () => {
     try {
-        const respuesta = await axios.get('/categorias-data');
-        console.log(respuesta);
-        if (respuesta.data.success) {
-            categorias.value = respuesta.data.data;
-            miNombre.value = respuesta.data.nombre;
+        const repuesta = await axios.get('/categorias-data');
+        console.log(repuesta);
+        if (repuesta.data.success) {
+            categorias.value = repuesta.data.data;
+            miNombre.value = repuesta.data.nombre;
         }
     } catch (error: any) {}
 };
+
 const abrirModal = () => {
-    mostrarModals.value = true;
+    mostrarModal.value = true;
 };
 
 const cerrarModal = () => {
-    mostrarModals.value = false;
+    mostrarModal.value = false;
 };
 
-const enviarFormulario = () => {
+//funciones para manipular el modal editar
+const abrirModalEditar = ( dataCategoria : any ) => {
+    mostrarModalEditar.value = true;
+
+    console.log(dataCategoria.nombre_categoria);
+    console.log(dataCategoria.descripcion);
+    console.log(dataCategoria);
+
+    formulario.value.nombre_categoria = dataCategoria.nombre_categoria;
+    formulario.value.descripcion = dataCategoria.descripcion;
+
+};
+
+const cerrarModalEditar = () => {
+    mostrarModalEditar.value = false;
+};
+
+
+const enviarFormulario = async () => {
     console.log('Josue Huarsaya');
     console.log(formulario.value);
-}
+
+    const respuesta = await axios.post('/categorias-data', formulario.value);
+    if (respuesta.data.success) {
+        Swal.fire({
+            title: 'Recurso Creado',
+            text: 'Categoria Creada',
+            icon: 'success',
+        });
+        mostrarModal.value = false;
+        listarCategoria();
+    } else {
+        Swal.fire({
+            title: 'Error al crear',
+            text: 'Categoria no creada',
+            icon: 'error',
+        });
+    }
+};
+
+
+const actualizarFormulario = async () => {
+    console.log('Josue Huarsa');
+    console.log(formulario.value);
+
+    const respuesta = await axios.put('/categorias-data', formulario.value);
+    if (respuesta.data.success) {
+        Swal.fire({
+            title: 'Recurso Creado',
+            text: 'Categoria Creada',
+            icon: 'success',
+        });
+        mostrarModal.value = false;
+        listarCategoria();
+    } else {
+        Swal.fire({
+            title: 'Error al crear',
+            text: 'Categoria no creada',
+            icon: 'error',
+        });
+    }
+};
+
+const eliminarCategoria = async (id: number) => {
+    const respuesta = await axios.delete(`/categorias-data/${id}`);
+    console.log(respuesta);
+    if (respuesta.data.success) {
+        Swal.fire({
+            title: 'Recurso Eliminado',
+            text: 'Categoria Eliminada',
+            icon: 'success',
+        });
+    }
+    listarCategoria();
+};
+
+const confirmacion = (id: number) => {
+    Swal.fire({
+        title: 'Estas Seguro?',
+        text: 'El recurso se eliminará de forma permanente',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Apectar',
+        cancelButtonText: 'Cancelar',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            eliminarCategoria(id);
+        }
+    });
+};
+
 onMounted(listarCategoria);
 </script>
 
 <template>
     <Head title="Categoria" />
+
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex flex-col items-center justify-center">
-            <div class="mt-4 flex flex-col items-center justify-center">
-                <p class="text-2xl text-amber-600">Categoria 😁</p>
+            <div class="mt-4">
+                <p class="text-2xl text-amber-600">Gestión Categoria 😊</p>
                 <small>{{ miNombre }}</small>
-                <div>
-                    <br />
-                    <a
-                        class="group relative inline-flex items-center overflow-hidden rounded-sm bg-indigo-600 px-8 py-3 text-white"
-                        href="#"
-                        @click="abrirModal"
-                    >
-                        <span
-                            class="absolute -start-full transition-all group-hover:start-4"
-                        >
-                            <svg
-                                class="size-5 rtl:rotate-180"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <Plus />
-                            </svg>
-                        </span>
-                        <span
-                            class="text-sm font-medium transition-all group-hover:ms-4"
-                        >
-                            agregar
-                        </span>
-                    </a>
-                </div>
             </div>
             <div>
-                <div class="overflow-x-auto">
-                    <table
-                        class="min-w-full divide-y-2 divide-gray-200 dark:divide-gray-700"
-                    >
-                        <thead class="ltr:text-left rtl:text-right">
-                            <tr
-                                class="*:font-medium *:text-gray-900 dark:*:text-white"
-                            >
-                                <th class="px-3 py-2 whitespace-nowrap">
-                                    Nombre
-                                </th>
-                                <th class="px-3 py-2 whitespace-nowrap">
-                                    Descripción
-                                </th>
-                                <th class="px-3 py-2 whitespace-nowrap">
-                                    Estado
-                                </th>
-                                <th class="px-3 py-2 whitespace-nowrap">
-                                    Opciones
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody
-                            class="divide-y divide-gray-200 *:even:bg-gray-50 dark:divide-gray-700 dark:*:even:bg-gray-800"
-                        >
-                            <tr
-                                v-for="item in categorias"
-                                :key="item.id"
-                                class="*:text-gray-900 *:first:font-medium dark:*:text-white"
-                            >
-                                <td class="px-3 py-2 whitespace-nowrap">
-                                    {{ item.nombre_categoria }}
-                                </td>
-                                <td class="px-3 py-2 whitespace-nowrap">
-                                    {{ item.descripcion }}
-                                </td>
-                                <td class="px-3 py-2 whitespace-nowrap">
-                                    {{ item.estado }}
-                                </td>
-                                <td class="px-3 py-2 whitespace-nowrap"></td>
-                                <div class="flex flex-row gap-4">
-                                    <a
-                                        class="inline-block rounded-sm border border-current px-8 py-3 text-sm font-medium text-green-600 transition hover:scale-110 hover:text-red-600 hover:shadow-xl"
-                                        href="#"
-                                    >
-                                        <Pencil />
-                                    </a>
-                                    <a
-                                        class="inline-block rounded-sm border border-current px-8 py-3 text-sm font-medium text-red-600 transition hover:scale-110 hover:text-black hover:shadow-xl"
-                                        href="#"
-                                    >
-                                        <Trash class="" />
-                                    </a>
-                                </div>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- piuhjhkjkjh -->
-
+                <!-- Modal registro categoria -->
                 <div
                     class="fixed inset-0 z-50 grid place-content-center bg-black/50 p-4"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="modalTitle"
-                    v-if="mostrarModals"
+                    v-if="mostrarModal"
                 >
                     <div
                         class="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900"
@@ -162,7 +166,7 @@ onMounted(listarCategoria);
                             id="modalTitle"
                             class="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white"
                         >
-                            Registro categoria
+                            Registro Categoria
                         </h2>
 
                         <form class="mt-4" @submit.prevent="enviarFormulario">
@@ -177,7 +181,7 @@ onMounted(listarCategoria);
                                         type="text"
                                         id="nombre_categoria"
                                         v-model="formulario.nombre_categoria"
-                                        class="mt-0.5 w-full rounded border-gray-300 p-1 shadow-sm sm:text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+                                        class="mt-0.5 w-full rounded border-gray-300 p-2 shadow-sm sm:text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white"
                                     />
                                 </label>
                             </div>
@@ -186,37 +190,186 @@ onMounted(listarCategoria);
                                     <span
                                         class="text-sm font-medium text-gray-700 dark:text-gray-200"
                                     >
-                                        descripcion
+                                        Descripcion
                                     </span>
                                     <input
                                         type="text"
                                         id="descripcion"
                                         v-model="formulario.descripcion"
-                                        class="mt-0.5 w-full rounded border-gray-300 p-1 shadow-sm sm:text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+                                        class="mt-0.5 w-full rounded border-gray-300 p-2 shadow-sm sm:text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white"
                                     />
                                 </label>
                             </div>
-
                             <footer class="mt-6 flex justify-end gap-2">
                                 <button
                                     type="button"
-                                    class="flex items-center justify-center gap-2 rounded bg-gray-100 px-10 py-1 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                                    class="flex items-center justify-center gap-2 rounded bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                                     @click="cerrarModal"
                                 >
-                                    <X />Cancel
+                                    <SquareX /> Cancel
                                 </button>
 
                                 <button
-                                    type="button"
-                                    @click="enviarFormulario"
+                                    type="submit"
                                     class="flex items-center justify-center gap-2 rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                                 >
-                                    <Save />guardar
+                                    <Save /> Guardar
                                 </button>
                             </footer>
                         </form>
                     </div>
                 </div>
+
+                <!-- Modal Editar Categoria -->
+                <div
+                    class="fixed inset-0 z-50 grid place-content-center bg-black/50 p-4"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="modalTitle"
+                    v-if="mostrarModalEditar"
+                >
+                    <div
+                        class="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900"
+                    >
+                        <h2
+                            id="modalTitle"
+                            class="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white"
+                        >
+                            Editar Categoria
+                        </h2>
+
+                        <form class="mt-4" @submit.prevent="enviarFormulario">
+                            <div class="mb-3">
+                                <label for="nombre_categoria">
+                                    <span
+                                        class="text-sm font-medium text-gray-700 dark:text-gray-200"
+                                    >
+                                        Nombre
+                                    </span>
+                                    <input
+                                        type="text"
+                                        id="nombre_categoria"
+                                        v-model="formulario.nombre_categoria"
+                                        class="mt-0.5 w-full rounded border-gray-300 p-2 shadow-sm sm:text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+                                    />
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="descripcion">
+                                    <span
+                                        class="text-sm font-medium text-gray-700 dark:text-gray-200"
+                                    >
+                                        Descripcion
+                                    </span>
+                                    <input
+                                        type="text"
+                                        id="descripcion"
+                                        v-model="formulario.descripcion"
+                                        class="mt-0.5 w-full rounded border-gray-300 p-2 shadow-sm sm:text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+                                    />
+                                </label>
+                            </div>
+                            <footer class="mt-6 flex justify-end gap-2">
+                                <button
+                                    type="button"
+                                    class="flex items-center justify-center gap-2 rounded bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                                    @click="cerrarModalEditar"
+                                >
+                                    <SquareX /> Cancel
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    class="flex items-center justify-center gap-2 rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+                                >
+                                    <Save /> Guardar
+                                </button>
+                            </footer>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mx-2 md:mx-10 lg:mx-20">
+            <div class="mb-3">
+                <a
+                    class="group relative inline-flex items-center overflow-hidden rounded-sm border border-current px-8 py-3 text-indigo-600 dark:text-white"
+                    href="#"
+                    @click="abrirModal"
+                >
+                    <span
+                        class="absolute -start-full transition-all group-hover:start-4"
+                    >
+                        <Plus />
+                    </span>
+                    <span
+                        class="text-sm font-medium transition-all group-hover:ms-4"
+                    >
+                        Agregar
+                    </span>
+                </a>
+            </div>
+
+            <div
+                class="bg-neutral-primary-soft rounded-base border-default relative overflow-x-auto border shadow-xs"
+            >
+                <table
+                    class="text-body w-full text-left text-sm rtl:text-right"
+                >
+                    <thead
+                        class="text-body bg-neutral-secondary-soft rounded-base border-default border-b text-sm"
+                    >
+                        <tr>
+                            <th scope="col" class="px-6 py-3 font-medium">
+                                Nombre
+                            </th>
+                            <th scope="col" class="px-6 py-3 font-medium">
+                                Descripción
+                            </th>
+                            <th scope="col" class="px-6 py-3 font-medium">
+                                Estado
+                            </th>
+                            <th scope="col" class="px-6 py-3 font-medium">
+                                Opciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="item in categorias"
+                            :key="item.id"
+                            class="bg-neutral-primary border-default border-b"
+                        >
+                            <th
+                                scope="row"
+                                class="text-heading px-6 py-4 font-medium whitespace-nowrap"
+                            >
+                                {{ item.nombre_categoria }}
+                            </th>
+                            <td class="px-6 py-4">{{ item.descripcion }}</td>
+                            <td class="px-6 py-4">{{ item.estado }}</td>
+                            <td class="px-6 py-4">
+                                <div class="flex flex-row gap-4">
+                                    <a
+                                        class="inline-block rounded-sm border border-current px-8 py-3 text-sm text-indigo-600 transition hover:scale-110 hover:rotate-2"
+                                        href="#"
+                                        @click="abrirModalEditar(item)"
+                                    >
+                                        <Pencil />
+                                    </a>
+                                    <a
+                                        class="inline-block rounded-sm border border-current px-8 py-3 text-sm font-medium text-rose-600 transition hover:scale-110 hover:rotate-2"
+                                        href="#"
+                                        @click="confirmacion(item.id)"
+                                    >
+                                        <Trash2 />
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </AppLayout>

@@ -11,7 +11,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { categoria, Contador, dashboard } from '@/routes';
+import { categoria, contador, dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import { BookOpen, Calculator, ChartBarStacked, Folder, LayoutGrid } from 'lucide-vue-next';
@@ -26,7 +26,7 @@ const mainNavItems: NavItem[] = [
 
     {
         title: 'Contador',
-        href: Contador(),
+        href: contador(),
         icon: Calculator,
     },
 

@@ -12,19 +12,31 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('dashboard', function () {
-    return Inertia::render('HolaMundo');
+    return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('Contador', function () {
+Route::get('hola-mundo', function () {
+    return Inertia::render('HolaMundo');
+})->middleware(['auth', 'verified'])->name('hola-mundo');
+
+Route::get('contador', function () {
     return Inertia::render('Contador');
-})->middleware(['auth', 'verified'])->name('Contador');
+})->middleware(['auth', 'verified'])->name('contador');
+
 
 //inertiajs
-
 Route::get('categoria', function () {
     return Inertia::render('Categoria');
 })->middleware(['auth', 'verified'])->name('categoria');
 
-Route::get('categorias-data',[CategoriaController::class,'listarCategoria']);
 
-require __DIR__.'/settings.php';
+Route::get('categorias-data', [CategoriaController::class, 'listarCategoria']);
+Route::post('categorias-data', [CategoriaController::class, 'guardarCategoria']);
+Route::put('categorias-data/{id_categoria}', [CategoriaController::class, 'editarCategoria']);
+Route::delete('categorias-data/{id_categoria}', [CategoriaController::class, 'eliminarCategoria']);
+
+Route::get('categorias-data-pdf', [CategoriaController::class, 'listarCategoria']);
+
+
+
+require __DIR__ . '/settings.php';
