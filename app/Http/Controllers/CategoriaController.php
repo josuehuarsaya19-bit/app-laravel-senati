@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -74,22 +75,18 @@ class CategoriaController extends Controller
             'success' => true,
             'nombre' => 'Josue Huarsaya',
             'data' => $categoria
-        ]); 
+        ]);
     }
+
+
     public function exportarPdfCategoria(){
         $categorias = Categoria::orderBy('created_at', 'desc')->get();
-        
-        //$pdf = Pdf::loadHTML('<p> josue Huarsaya </p>');
 
-        $pdf = pdf::loadVien('categoria.pdf',compact('categorias'));
-
+        //$pdf = Pdf::loadHTML('<p>Diego Lipa</p>');
+        $pdf = Pdf::loadView('categorias.pdf',compact('categorias'));
 
         $pdf->setPaper('a4');
 
-        return $pdf->downolad('reporte_categoria.pdf');
-
-    
-
-
+        return $pdf->download('reporte_categoria.pdf');
     }
 }

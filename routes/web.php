@@ -35,7 +35,8 @@ Route::post('categorias-data', [CategoriaController::class, 'guardarCategoria'])
 Route::put('categorias-data/{id_categoria}', [CategoriaController::class, 'editarCategoria']);
 Route::delete('categorias-data/{id_categoria}', [CategoriaController::class, 'eliminarCategoria']);
 
-Route::get('categorias-data-pdf', [CategoriaController::class, 'listarCategoria']);
+//EXPORTAR EN PDF
+Route::get('categorias-data-pdf', [CategoriaController::class, 'exportarPdfCategoria']);
 
 
 
